@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#6200EE</color> <!-- color principal (puede ser el azul o morado) -->
+    <color name="gray">#B0BEC5</color> <!-- color para el hint del texto -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="purple">#8692f7</color>
 </resources>

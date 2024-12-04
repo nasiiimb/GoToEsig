@@ -12,15 +12,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GoToEsig"
         tools:targetApi="31">
+
+        <!-- LoginActivity será la actividad principal -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- MainActivity aún puede usarse, pero no como actividad principal -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
