@@ -27,6 +27,12 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
+        <!-- Agrega SignUpActivity aquí -->
+        <activity
+            android:name=".ui.login.SignUpActivity"
+            android:exported="true" />
+
     </application>
 
 </manifest>
