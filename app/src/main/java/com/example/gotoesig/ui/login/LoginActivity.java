@@ -1,7 +1,10 @@
 package com.example.gotoesig.ui.login;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,13 +50,20 @@ public class LoginActivity extends AppCompatActivity {
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(LoginActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
             } else {
+                // Log input for debugging
+                Log.d(TAG, "Attempting to log in with Email: " + email);
+
                 // Sign in with Firebase Authentication
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this, task -> {
                             if (task.isSuccessful()) {
                                 // Successfully logged in
+                                Log.d(TAG, "signInWithEmailAndPassword:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
+
                                 if (user != null) {
+                                    Log.d(TAG, "User authenticated: UID = " + user.getUid());
+
                                     // Fetch additional user data from Firestore (optional)
                                     db.collection("users")
                                             .document(user.getUid())
@@ -62,18 +72,27 @@ public class LoginActivity extends AppCompatActivity {
                                                 if (documentSnapshot.exists()) {
                                                     // You can access the user's data here
                                                     String username = documentSnapshot.getString("username");
+                                                    Log.d(TAG, "User data fetched successfully: Username = " + username);
                                                     Toast.makeText(LoginActivity.this, "Welcome, " + username, Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Log.w(TAG, "User document not found in Firestore.");
                                                 }
+
                                                 // Proceed to MainActivity
                                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                                 startActivity(intent);
                                                 finish();  // Close LoginActivity
                                             })
                                             .addOnFailureListener(e -> {
+                                                Log.e(TAG, "Error fetching user data: ", e);
                                                 Toast.makeText(LoginActivity.this, "Error fetching user data", Toast.LENGTH_SHORT).show();
                                             });
+                                } else {
+                                    Log.e(TAG, "signInWithEmailAndPassword: user is null after login.");
+                                    Toast.makeText(LoginActivity.this, "Unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
+                                Log.e(TAG, "signInWithEmailAndPassword:failure", task.getException());
                                 Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
