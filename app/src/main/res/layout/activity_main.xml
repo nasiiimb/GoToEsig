@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F1F1F1">
 
-    <!-- Logo ESIGELEC centrado y un poco más abajo -->
+    <!-- ESIGELEC logo centered and slightly lower -->
     <ImageView
         android:id="@+id/esigLogo"
         android:layout_width="180dp"
@@ -15,7 +17,7 @@
         android:layout_marginTop="120dp"
         android:src="@drawable/esiglogo" />
 
-    <!-- Título GoToEsig, ahora en grande y centrado, con nueva fuente -->
+    <!-- Title GoToEsig, large and centered, with a new font -->
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -29,7 +31,7 @@
         android:textSize="45sp"
         android:textStyle="bold" />
 
-    <!-- Barra de navegación en la parte inferior con más estilo -->
+    <!-- Bottom navigation bar with more style -->
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -37,84 +39,101 @@
         android:layout_alignParentBottom="true"
         android:background="#6A1B9A"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="6">
 
-        <!-- Cuadro para el perfil (icono) -->
+        <!-- Profile icon button -->
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:id="@+id/profileIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/profile_vector"
                 app:tint="#FFFFFF"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
 
-        <!-- Cuadro para añadir trayecto (icono) -->
+        <!-- Add trip icon button -->
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:id="@+id/addTrajetIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/baseline_add_24"
                 app:tint="#FFFFFF"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
 
-        <!-- Cuadro para ver trayectos (icono) -->
+        <!-- My trips icon button -->
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:id="@+id/myTrajectsIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/my_trajects_vector"
                 app:tint="#FFFFFF"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
 
-        <!-- Cuadro para buscar trayecto (icono) -->
+        <!-- Search icon button -->
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:id="@+id/searchIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/search_vector"
                 app:tint="#FFFFFF"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
 
-        <!-- Cuadro para estadísticas (icono) -->
+        <!-- Statistics icon button -->
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
             android:gravity="center">
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:id="@+id/statsIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/stats_vector"
+                app:tint="#FFFFFF"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+
+        <!-- Logout icon button -->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/logoutIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/logout_vector"
                 app:tint="#FFFFFF"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
