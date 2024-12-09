@@ -34,65 +34,99 @@
                 android:textStyle="bold" />
 
             <!-- Username -->
+            <TextView
+                android:id="@+id/labelPrenom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text= "Prenom *"
+                android:textColor="@color/purple"
+                android:textSize="16sp"
+                android:layout_marginTop="40dp" />
+
             <EditText
-                android:id="@+id/signupUsername"
+                android:id="@+id/signupPrenom"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="40dp"
                 android:background="@drawable/custom_edittext"
-                android:hint="Username"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray" />
 
             <!-- Email -->
+            <TextView
+                android:id="@+id/labelEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email *"
+                android:textColor="@color/purple"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp" />
+
             <EditText
                 android:id="@+id/signupEmail"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="20dp"
                 android:background="@drawable/custom_edittext"
-                android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray" />
 
             <!-- Password -->
+            <TextView
+                android:id="@+id/labelPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Password *"
+                android:textColor="@color/purple"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp" />
+
             <EditText
                 android:id="@+id/signupPassword"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="20dp"
                 android:background="@drawable/custom_edittext"
-                android:hint="Password"
                 android:inputType="textPassword"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray" />
 
             <!-- Phone -->
+            <TextView
+                android:id="@+id/labelPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Phone"
+                android:textColor="@color/purple"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp" />
+
             <EditText
                 android:id="@+id/signupPhone"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="20dp"
                 android:background="@drawable/custom_edittext"
-                android:hint="Phone"
                 android:inputType="phone"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray" />
 
             <!-- City -->
+            <TextView
+                android:id="@+id/labelCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="City"
+                android:textColor="@color/purple"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp" />
+
             <EditText
                 android:id="@+id/signupCity"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="20dp"
                 android:background="@drawable/custom_edittext"
-                android:hint="City"
-                android:inputType="text"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray" />

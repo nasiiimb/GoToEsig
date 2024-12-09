@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Back button -->
+    <ImageView
+        android:id="@+id/back_button"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_back_arrow"
+        android:tint="@color/purple"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <!-- Main container -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/back_button"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Profile picture -->
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="135dp"
+                android:layout_height="135dp"
+                android:layout_marginBottom="28dp"
+                android:src="@drawable/profile_vector"
+                android:tint="@color/purple"
+                android:scaleType="centerCrop"
+                android:background="@drawable/circle_background"
+                android:padding="3dp" />
+
+            <!-- Name -->
+            <EditText
+                android:id="@+id/profile_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your name"
+                android:textSize="17sp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/custom_edittext"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:inputType="textPersonName" />
+
+            <!-- Surname -->
+            <EditText
+                android:id="@+id/profile_surname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your surname"
+                android:textSize="17sp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/custom_edittext"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:inputType="textPersonName" />
+
+            <!-- Phone number -->
+            <EditText
+                android:id="@+id/profile_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your phone number"
+                android:textSize="17sp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/custom_edittext"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:inputType="phone" />
+
+            <!-- City -->
+            <EditText
+                android:id="@+id/profile_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your city"
+                android:textSize="17sp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/custom_edittext"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:inputType="text" />
+
+            <!-- Save button -->
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enregistrer"
+                android:textSize="17sp"
+                android:layout_marginTop="28dp"
+                android:padding="14dp"
+                android:backgroundTint="@color/purple"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

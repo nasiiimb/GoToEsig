@@ -34,7 +34,7 @@ public class SignUpActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         // Initialize UI elements
-        usernameEditText = findViewById(R.id.signupUsername);
+        usernameEditText = findViewById(R.id.signupPrenom);
         emailEditText = findViewById(R.id.signupEmail);
         passwordEditText = findViewById(R.id.signupPassword);
         phoneEditText = findViewById(R.id.signupPhone);
@@ -43,14 +43,14 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Set up sign-up button click listener
         signUpButton.setOnClickListener(v -> {
-            String username = usernameEditText.getText().toString().trim();
+            String prenom = usernameEditText.getText().toString().trim();
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
             String phone = phoneEditText.getText().toString().trim();
             String city = cityEditText.getText().toString().trim();
 
             // Validate inputs
-            if (username.isEmpty() || email.isEmpty() || password.isEmpty() || phone.isEmpty() || city.isEmpty()) {
+            if (prenom.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(SignUpActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -64,7 +64,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                             // Create user profile data
                             Map<String, Object> userProfile = new HashMap<>();
-                            userProfile.put("username", username);
+                            userProfile.put("Prenom", prenom);
                             userProfile.put("email", email);
                             userProfile.put("phone", phone);
                             userProfile.put("city", city);
