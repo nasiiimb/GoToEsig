@@ -45,12 +45,15 @@ dependencies {
     // Other dependencies
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.activity)
+    implementation("androidx.activity:activity:1.8.0")
     implementation(libs.constraintlayout)
 
     // Glide dependency
     implementation("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1") // Usar annotationProcessor
+
+    // Activity Result API dependency
+    implementation("androidx.activity:activity:1.7.2")
 
     // Testing dependencies
     testImplementation(libs.junit)

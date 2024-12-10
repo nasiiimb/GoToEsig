@@ -31,7 +31,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
-    private EditText prenomEditText, surnameEditText;
+    private EditText prenomEditText, surnameEditText, phoneEditText, cityEditText;
     private ImageView profileImageView, backButton;
     private Uri selectedImageUri;
     private Button saveButton;
@@ -49,6 +49,8 @@ public class ProfileActivity extends AppCompatActivity {
         // UI references
         prenomEditText = findViewById(R.id.profile_name);
         surnameEditText = findViewById(R.id.profile_surname);
+        phoneEditText = findViewById(R.id.profile_phone);
+        cityEditText = findViewById(R.id.profile_city);
         profileImageView = findViewById(R.id.profile_image);
         saveButton = findViewById(R.id.save_button);
         backButton = findViewById(R.id.back_button);
@@ -74,14 +76,18 @@ public class ProfileActivity extends AppCompatActivity {
                 if (documentSnapshot.exists()) {
                     String prenom = documentSnapshot.getString("prenom");
                     String surname = documentSnapshot.getString("surname");
+                    String phone = documentSnapshot.getString("phone");
+                    String city = documentSnapshot.getString("city");
                     String profileImage = documentSnapshot.getString("profileImage");
 
                     // Log data retrieved
-                    Log.d("ProfileActivity", "Retrieved data - Prenom: " + prenom + ", Surname: " + surname + ", Profile Image: " + profileImage);
+                    Log.d("ProfileActivity", "Data retrieved: " + documentSnapshot.getData());
 
                     // Set values in EditTexts
-                    prenomEditText.setText(prenom != null && !prenom.isEmpty() ? prenom : "Enter your name");
-                    surnameEditText.setText(surname != null && !surname.isEmpty() ? surname : "Enter your surname");
+                    prenomEditText.setText(prenom != null ? prenom : "");
+                    surnameEditText.setText(surname != null ? surname : "");
+                    phoneEditText.setText(phone != null ? phone : "");
+                    cityEditText.setText(city != null ? city : "");
 
                     // Set profile image if available
                     if (profileImage != null && !profileImage.isEmpty()) {
@@ -115,55 +121,50 @@ public class ProfileActivity extends AppCompatActivity {
 
     // Save the updated profile data to Firestore
     private void saveProfileData() {
-        String prenom = prenomEditText.getText().toString();
-        String surname = surnameEditText.getText().toString();
+        String prenom = prenomEditText.getText().toString().trim();
+        String surname = surnameEditText.getText().toString().trim();
+        String phone = phoneEditText.getText().toString().trim();
+        String city = cityEditText.getText().toString().trim();
 
-        // Guardamos el valor de la URL de la imagen de perfil en una variable final
-        final String[] profileImageUrl = {null}; // Usamos un arreglo para hacerlo final
+        // Initialize a map to store updated fields
+        Map<String, Object> updatedData = new HashMap<>();
 
-        Log.d("ProfileActivity", "Saving data - Prenom: " + prenom + ", Surname: " + surname);
+        // Add non-empty fields to the map
+        if (!prenom.isEmpty()) updatedData.put("prenom", prenom);
+        if (!surname.isEmpty()) updatedData.put("surname", surname);
+        if (!phone.isEmpty()) updatedData.put("phone", phone);
+        if (!city.isEmpty()) updatedData.put("city", city);
 
         if (selectedImageUri != null) {
-            // Subir la imagen del perfil a Firebase Storage
+            // Upload the profile image to Firebase Storage
             StorageReference storageRef = FirebaseStorage.getInstance().getReference("profile_images")
                     .child(currentUser.getUid() + ".jpg");
             storageRef.putFile(selectedImageUri)
                     .addOnSuccessListener(taskSnapshot -> {
                         storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            profileImageUrl[0] = uri.toString();  // Asignamos el valor de la URL
-                            saveToFirestore(prenom, surname, profileImageUrl[0]);  // Llamamos a la función con la URL
+                            updatedData.put("profileImage", uri.toString());
+                            saveToFirestore(updatedData);
                         });
                     })
                     .addOnFailureListener(e -> {
-                        // Si la carga falla, guardamos sin la URL de la imagen
                         Log.e("ProfileActivity", "Error uploading profile image", e);
-                        saveToFirestore(prenom, surname, profileImageUrl[0]);
+                        saveToFirestore(updatedData);
                     });
         } else {
-            // Si no se ha seleccionado ninguna imagen, solo guardamos los datos
-            saveToFirestore(prenom, surname, profileImageUrl[0]);
+            saveToFirestore(updatedData);
         }
     }
 
     // Save the updated user data to Firestore
-    private void saveToFirestore(String prenom, String surname, String profileImageUrl) {
-        if (currentUser != null) {
+    private void saveToFirestore(Map<String, Object> updatedData) {
+        if (currentUser != null && !updatedData.isEmpty()) {
             DocumentReference userDocRef = db.collection("users").document(currentUser.getUid());
-            Map<String, Object> userData = new HashMap<>();
-            userData.put("prenom", prenom);
-            userData.put("surname", surname);
-            if (profileImageUrl != null) {
-                userData.put("profileImage", profileImageUrl);
-            }
-
-            userDocRef.update(userData)
+            userDocRef.update(updatedData)
                     .addOnSuccessListener(aVoid -> {
-                        // Successfully updated the data
-                        Log.d("ProfileActivity", "Profile updated successfully");
+                        Log.d("ProfileActivity", "Profile updated successfully: " + updatedData);
                         Toast.makeText(ProfileActivity.this, "Profile updated", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        // Handle error updating profile data
                         Log.e("ProfileActivity", "Error updating profile data", e);
                         Toast.makeText(ProfileActivity.this, "Failed to update profile", Toast.LENGTH_SHORT).show();
                     });

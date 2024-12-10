@@ -6,7 +6,9 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.gotoesig.MainActivity;
 import com.example.gotoesig.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,7 +66,8 @@ public class SignUpActivity extends AppCompatActivity {
 
                             // Create user profile data
                             Map<String, Object> userProfile = new HashMap<>();
-                            userProfile.put("Prenom", prenom);
+                            userProfile.put("uid", uid); // Store UID explicitly
+                            userProfile.put("prenom", prenom);
                             userProfile.put("email", email);
                             userProfile.put("phone", phone);
                             userProfile.put("city", city);

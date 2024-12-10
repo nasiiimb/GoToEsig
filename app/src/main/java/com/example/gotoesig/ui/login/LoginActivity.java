@@ -5,7 +5,6 @@ import static android.content.ContentValues.TAG;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,7 +22,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
     private Button loginButton;
-    private TextView signUpButton;  // Cambiado a TextView
+    private TextView signUpButton;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -37,15 +36,15 @@ public class LoginActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         // Initialize UI elements
-        emailEditText = findViewById(R.id.username);  // Aquí se usa "username" ya que el campo de usuario está con ese ID
-        passwordEditText = findViewById(R.id.password);  // Aquí se usa "password" como está en el XML
+        emailEditText = findViewById(R.id.email);
+        passwordEditText = findViewById(R.id.password);
         loginButton = findViewById(R.id.loginButton);
-        signUpButton = findViewById(R.id.signupText);  // Aquí se usa el TextView para redirigir al SignUp
+        signUpButton = findViewById(R.id.signupText);
 
         // Set up login button click listener
         loginButton.setOnClickListener(v -> {
-            String email = emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
+            String email = emailEditText.getText().toString().trim();
+            String password = passwordEditText.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(LoginActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
@@ -64,16 +63,16 @@ public class LoginActivity extends AppCompatActivity {
                                 if (user != null) {
                                     Log.d(TAG, "User authenticated: UID = " + user.getUid());
 
-                                    // Fetch additional user data from Firestore (optional)
+                                    // Fetch additional user data from Firestore
                                     db.collection("users")
                                             .document(user.getUid())
                                             .get()
                                             .addOnSuccessListener(documentSnapshot -> {
                                                 if (documentSnapshot.exists()) {
-                                                    // You can access the user's data here
-                                                    String username = documentSnapshot.getString("username");
-                                                    Log.d(TAG, "User data fetched successfully: Username = " + username);
-                                                    Toast.makeText(LoginActivity.this, "Welcome, " + username, Toast.LENGTH_SHORT).show();
+                                                    // Retrieve user data
+                                                    String prenom = documentSnapshot.getString("prenom");
+                                                    Log.d(TAG, "User data fetched successfully: Prenom = " + prenom);
+                                                    Toast.makeText(LoginActivity.this, "Welcome, " + prenom, Toast.LENGTH_SHORT).show();
                                                 } else {
                                                     Log.w(TAG, "User document not found in Firestore.");
                                                 }
@@ -81,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 // Proceed to MainActivity
                                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                                 startActivity(intent);
-                                                finish();  // Close LoginActivity
+                                                finish(); // Close LoginActivity
                                             })
                                             .addOnFailureListener(e -> {
                                                 Log.e(TAG, "Error fetching user data: ", e);
