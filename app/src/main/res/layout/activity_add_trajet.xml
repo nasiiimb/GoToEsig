@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
     <!-- Back button -->
@@ -29,85 +29,117 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-            <!-- Profile picture -->
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="135dp"
-                android:layout_height="135dp"
-                android:layout_marginBottom="28dp"
-                android:src="@drawable/profile_vector"
-                android:scaleType="centerCrop"
-                android:background="@drawable/circle_background"
-                android:padding="3dp"
-                app:tint="@color/purple" />
-
-            <!-- Name -->
-            <EditText
-                android:id="@+id/profile_name"
+            <!-- Transport type spinner -->
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter your name"
+                android:text="Moyen de transport"
+                android:textSize="18sp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/black"/>
+
+            <Spinner
+                android:id="@+id/transport_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- Point de départ -->
+            <EditText
+                android:id="@+id/depart_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Point de départ"
                 android:textSize="17sp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/custom_edittext"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray"
-                android:inputType="textPersonName" />
+                android:inputType="text"/>
 
-            <!-- Surname -->
+            <!-- Date -->
             <EditText
-                android:id="@+id/profile_surname"
+                android:id="@+id/date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter your surname"
+                android:hint="Date"
                 android:textSize="17sp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/custom_edittext"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray"
-                android:inputType="textPersonName" />
+                android:inputType="date"/>
 
-            <!-- Phone number -->
+            <!-- Heure -->
             <EditText
-                android:id="@+id/profile_phone"
+                android:id="@+id/time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter your phone number"
+                android:hint="Heure"
                 android:textSize="17sp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/custom_edittext"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray"
-                android:inputType="phone" />
+                android:inputType="time"/>
 
-            <!-- City -->
+            <!-- Retard toléré -->
             <EditText
-                android:id="@+id/profile_city"
+                android:id="@+id/tolerance_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter your city"
+                android:hint="Retard toléré (min)"
                 android:textSize="17sp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/custom_edittext"
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray"
-                android:inputType="text" />
+                android:inputType="number"/>
 
-            <!-- Save button -->
+            <!-- Nombre de places disponibles -->
+            <EditText
+                android:id="@+id/available_seats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre de places disponibles"
+                android:textSize="17sp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/custom_edittext"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:inputType="number"/>
+
+            <!-- Contribution demandée (visible seulement si 'Véhicule' est choisi) -->
+            <EditText
+                android:id="@+id/contribution"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contribution demandée en €"
+                android:textSize="17sp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/custom_edittext"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:visibility="gone"
+                android:inputType="numberDecimal"/>
+
+            <!-- Add trip button -->
             <Button
-                android:id="@+id/save_button"
+                android:id="@+id/add_trip_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Enregistrer"
+                android:text="Ajouter le trajet"
                 android:textSize="17sp"
                 android:layout_marginTop="28dp"
                 android:padding="14dp"
                 android:backgroundTint="@color/purple"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

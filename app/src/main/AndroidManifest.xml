@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissions for OpenRouteService and OSMDroid -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,7 +22,7 @@
         android:theme="@style/Theme.GoToEsig"
         tools:targetApi="31">
 
-        <!-- LoginActivity será la actividad principal -->
+        <!-- Main activity, defined as the entry point -->
         <activity
             android:name="com.example.gotoesig.ui.login.LoginActivity"
             android:exported="true">
@@ -23,37 +32,31 @@
             </intent-filter>
         </activity>
 
-        <!-- MainActivity -->
+        <!-- Other activities -->
         <activity
             android:name="com.example.gotoesig.MainActivity"
             android:exported="true" />
 
-        <!-- SignUpActivity -->
         <activity
             android:name="com.example.gotoesig.ui.login.SignUpActivity"
             android:exported="true" />
 
-        <!-- AddTrajetActivity -->
         <activity
             android:name="com.example.gotoesig.ui.AddTrajetActivity"
             android:exported="true" />
 
-        <!-- ProfileActivity -->
         <activity
             android:name="com.example.gotoesig.ui.ProfileActivity"
             android:exported="true" />
 
-        <!-- SearchActivity -->
         <activity
             android:name="com.example.gotoesig.ui.SearchActivity"
             android:exported="true" />
 
-        <!-- StatisticsActivity -->
         <activity
             android:name="com.example.gotoesig.ui.StatisticsActivity"
             android:exported="true" />
 
-        <!-- TrajetsActivity -->
         <activity
             android:name="com.example.gotoesig.ui.TrajetsActivity"
             android:exported="true" />

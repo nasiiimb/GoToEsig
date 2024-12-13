@@ -50,6 +50,7 @@ dependencies {
 
     // Glide dependency
     implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation(libs.play.services.location)
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1") // Usar annotationProcessor
 
     // Activity Result API dependency
@@ -59,6 +60,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.google.code.gson:gson:2.8.8")
 }
 
 apply(plugin = "com.google.gms.google-services")

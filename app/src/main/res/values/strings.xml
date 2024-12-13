@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">GoToEsig</string>
     <string name="gotoesig">GoToEsig</string>
+
+    <!-- Lista de modos de transporte -->
+    <string-array name="transport_modes">
+        <item>Véhicule</item>
+        <item>Transport public</item>
+        <item>Vélo</item>
+        <item>À pied</item>
+
+    </string-array>
 </resources>
+

@@ -71,6 +71,7 @@ public class SignUpActivity extends AppCompatActivity {
                             userProfile.put("email", email);
                             userProfile.put("phone", phone);
                             userProfile.put("city", city);
+                            userProfile.put("photo", ""); // Add the photo field with an empty URI initially
 
                             // Save profile to Firestore
                             db.collection("users").document(uid).set(userProfile)
@@ -93,3 +94,4 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 }
+
