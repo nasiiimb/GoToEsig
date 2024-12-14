@@ -3,6 +3,7 @@ package com.example.gotoesig.ui;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,11 +12,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.gotoesig.MainActivity;
 import com.example.gotoesig.R;
 import com.example.gotoesig.data.api.OpenRouteService;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +37,7 @@ import java.util.concurrent.Executors;
 public class AddTrajetActivity extends AppCompatActivity {
 
     private Spinner transportSpinner;
+    private ImageView backButton;
     private EditText departPoint, date, time, toleranceTime, availableSeats, contribution;
     private Button addTripButton;
     private FirebaseFirestore firestore;
@@ -65,10 +69,18 @@ public class AddTrajetActivity extends AppCompatActivity {
         contribution = findViewById(R.id.contribution);
         addTripButton = findViewById(R.id.add_trip_button);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.transport_modes, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.transport_modes, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         transportSpinner.setAdapter(adapter);
+
+        // Inicializa el botón de retroceso
+        backButton = findViewById(R.id.back_button);
+        // Listener para volver al MainActivity
+        backButton.setOnClickListener(v -> {
+            Intent intent = new Intent(AddTrajetActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        });
 
         transportSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
@@ -114,6 +126,7 @@ public class AddTrajetActivity extends AppCompatActivity {
     }
 
     private void addTrip() {
+        // Obtener los valores de los EditText y Spinner antes de iniciar el proceso en el executor
         String transportType = transportSpinner.getSelectedItem().toString();
         String startPoint = departPoint.getText().toString();
         String tripDate = date.getText().toString();
@@ -129,15 +142,24 @@ public class AddTrajetActivity extends AppCompatActivity {
 
         executor.execute(() -> {
             try {
+                // Obtener los valores dentro del executor para asegurarse de que están actualizados
+                String transportTypeInsideExecutor = transportSpinner.getSelectedItem().toString();
+                String startPointInsideExecutor = departPoint.getText().toString();
+                String tripDateInsideExecutor = date.getText().toString();
+                String tripTimeInsideExecutor = time.getText().toString();
+                String delayToleranceInsideExecutor = toleranceTime.getText().toString();
+                String seatsAvailableInsideExecutor = availableSeats.getText().toString();
+                String contributionAmountInsideExecutor = contribution.getVisibility() == View.VISIBLE ? contribution.getText().toString() : "0";
+
                 Log.d("AddTrajetActivity", "Iniciando obtención de coordenadas para el punto de partida...");
-                double[] startCoords = OpenRouteService.getCoordinatesFromAddress(startPoint);
+                double[] startCoords = OpenRouteService.getCoordinatesFromAddress(startPointInsideExecutor);
 
                 // Agregar mensaje de depuración para verificar las coordenadas obtenidas
                 Log.d("AddTrajetActivity", "Coordenadas obtenidas: Lat: " + startCoords[0] + ", Lon: " + startCoords[1]);
 
                 Log.d("AddTrajetActivity", "Iniciando cálculo de distancia y duración...");
                 // Usar las coordenadas de ESIGELEC como destino
-                double[] result = OpenRouteService.getDistanceAndDuration(startCoords, ESIGELEC_COORDS, transportType);
+                double[] result = OpenRouteService.getDistanceAndDuration(startCoords, ESIGELEC_COORDS, transportTypeInsideExecutor);
 
                 // Agregar mensaje de depuración para los resultados del cálculo
                 Log.d("AddTrajetActivity", "Resultado distancia y duración: " + result[0] + " km, " + result[1] + " minutos");
@@ -153,20 +175,20 @@ public class AddTrajetActivity extends AppCompatActivity {
 
                     // Crear el mensaje para mostrar en el AlertDialog
                     String message = String.format("Départ: %s\nDestination: ESIGELEC\nHeure: %s\nDistance(km): %.2f km\nTemps estimé(min): %.2f min\nPrix: %s",
-                            startPoint, tripTime, calculatedDistance, calculatedDuration, contributionAmount);
+                            startPointInsideExecutor, tripTimeInsideExecutor, calculatedDistance, calculatedDuration, contributionAmountInsideExecutor);
 
                     new AlertDialog.Builder(this)
                             .setTitle("Confirmer l'ajout")
                             .setMessage(message)
                             .setPositiveButton("Oui", (dialog, which) -> {
                                 Map<String, Object> trip = new HashMap<>();
-                                trip.put("transport_type", transportType);
-                                trip.put("start_point", startPoint);
-                                trip.put("date", tripDate);
-                                trip.put("time", tripTime);
-                                trip.put("delay_tolerance", delayTolerance);
-                                trip.put("seats_available", seatsAvailable);
-                                trip.put("contribution_amount", contributionAmount);
+                                trip.put("transport_type", transportTypeInsideExecutor);
+                                trip.put("start_point", startPointInsideExecutor);
+                                trip.put("date", tripDateInsideExecutor);
+                                trip.put("time", tripTimeInsideExecutor);
+                                trip.put("delay_tolerance", delayToleranceInsideExecutor);
+                                trip.put("seats_available", seatsAvailableInsideExecutor);
+                                trip.put("contribution_amount", contributionAmountInsideExecutor);
                                 trip.put("distance", distance);
                                 trip.put("duration", duration);
                                 trip.put("creator_id", firebaseAuth.getCurrentUser().getUid());
@@ -190,6 +212,7 @@ public class AddTrajetActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
 

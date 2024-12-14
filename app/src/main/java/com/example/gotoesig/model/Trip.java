@@ -1,43 +1,66 @@
 package com.example.gotoesig.model;
 
+import java.util.List;
+
 public class Trip {
-    private String userId;
-    private String departurePoint;
+    private String contributionAmount;
+    private String creatorId;
     private String date;
+    private String delayTolerance;
+    private double distance;
+    private double duration;
+    private List<String> participants;
+    private String seatsAvailable;
+    private String startPoint;
     private String time;
-    private String delay;
-    private String availablePlaces;
-    private String transportMode;
+    private String transportType;
 
+    // Constructor vacío requerido por Firebase
     public Trip() {
-        // Constructor vacío necesario para Firestore
     }
 
-    public Trip(String userId, String departurePoint, String date, String time, String delay, String availablePlaces, String transportMode) {
-        this.userId = userId;
-        this.departurePoint = departurePoint;
+    // Constructor completo para inicializar todos los campos
+    public Trip(String contributionAmount, String creatorId, String date, String delayTolerance,
+                double distance, double duration, List<String> participants, String seatsAvailable,
+                String startPoint, String time, String transportType) {
+        this.contributionAmount = contributionAmount;
+        this.creatorId = creatorId;
         this.date = date;
+        this.delayTolerance = delayTolerance;
+        this.distance = distance;
+        this.duration = duration;
+        this.participants = participants;
+        this.seatsAvailable = seatsAvailable;
+        this.startPoint = startPoint;
         this.time = time;
-        this.delay = delay;
-        this.availablePlaces = availablePlaces;
-        this.transportMode = transportMode;
+        this.transportType = transportType;
     }
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 
     // Getters y setters
-    public String getUserId() {
-        return userId;
+    public String getContributionAmount() {
+        return contributionAmount;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setContributionAmount(String contributionAmount) {
+        this.contributionAmount = contributionAmount;
     }
 
-    public String getDeparturePoint() {
-        return departurePoint;
+    public String getCreatorId() {
+        return creatorId;
     }
 
-    public void setDeparturePoint(String departurePoint) {
-        this.departurePoint = departurePoint;
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
     }
 
     public String getDate() {
@@ -48,6 +71,54 @@ public class Trip {
         this.date = date;
     }
 
+    public String getDelayTolerance() {
+        return delayTolerance;
+    }
+
+    public void setDelayTolerance(String delayTolerance) {
+        this.delayTolerance = delayTolerance;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    public double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(double duration) {
+        this.duration = duration;
+    }
+
+    public List<String> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<String> participants) {
+        this.participants = participants;
+    }
+
+    public String getSeatsAvailable() {
+        return seatsAvailable;
+    }
+
+    public void setSeatsAvailable(String seatsAvailable) {
+        this.seatsAvailable = seatsAvailable;
+    }
+
+    public String getStartPoint() {
+        return startPoint;
+    }
+
+    public void setStartPoint(String startPoint) {
+        this.startPoint = startPoint;
+    }
+
     public String getTime() {
         return time;
     }
@@ -56,27 +127,32 @@ public class Trip {
         this.time = time;
     }
 
-    public String getDelay() {
-        return delay;
+    public String getTransportType() {
+        return transportType;
     }
 
-    public void setDelay(String delay) {
-        this.delay = delay;
+    public void setTransportType(String transportType) {
+        this.transportType = transportType;
     }
 
-    public String getAvailablePlaces() {
-        return availablePlaces;
+
+    @Override
+    public String toString() {
+        return "Trip{" +
+                "contributionAmount='" + contributionAmount + '\'' +
+                ", creatorId='" + creatorId + '\'' +
+                ", date='" + date + '\'' +
+                ", delayTolerance='" + delayTolerance + '\'' +
+                ", distance=" + distance +
+                ", duration=" + duration +
+                ", participants=" + participants +
+                ", seatsAvailable='" + seatsAvailable + '\'' +
+                ", startPoint='" + startPoint + '\'' +
+                ", time='" + time + '\'' +
+                ", transportType='" + transportType + '\'' +
+                '}';
     }
 
-    public void setAvailablePlaces(String availablePlaces) {
-        this.availablePlaces = availablePlaces;
-    }
 
-    public String getTransportMode() {
-        return transportMode;
-    }
-
-    public void setTransportMode(String transportMode) {
-        this.transportMode = transportMode;
-    }
 }
+

@@ -13,6 +13,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class OpenRouteService {
 
@@ -22,6 +25,7 @@ public class OpenRouteService {
     // Método para obtener la distancia y la duración
     public static double[] getDistanceAndDuration(double[] startCoords, double[] endCoords, String transportMode) throws IOException, JSONException {
         // Construir la URL del endpoint
+        Log.d("OpenRouteService", "metodo de tranporte: "+ transportMode);  // Mensaje de depuración
         String urlString = "https://api.openrouteservice.org/v2/matrix/" + getTransportType(transportMode);
         Log.d("OpenRouteService", "Request URL: " + urlString);  // Mensaje de depuración
 
@@ -99,7 +103,9 @@ public class OpenRouteService {
 
     // Método para obtener las coordenadas a partir de la dirección
     public static double[] getCoordinatesFromAddress(String address) throws IOException, JSONException {
+        Log.d("OpenRouteService",".........................................");
         String url = "https://api.openrouteservice.org/geocode/search?api_key=" + API_KEY + "&text=" + address;
+        Log.d("OpenRouteService",url);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         Response response = client.newCall(request).execute();
@@ -125,19 +131,75 @@ public class OpenRouteService {
         Log.d("OpenRouteService", "Coordenadas predeterminadas: Lat = 49.447, Lon = 1.092");
         return new double[]{49.447, 1.092};  // Coordenadas ficticias si hay algún error
     }
+    // Método para obtener las direcciones  entre dos coordenadas
+    public static List<List<Double>> getDirections(double[] startCoords, double[] endCoords, String transportMode) throws IOException, JSONException {
+        // Construir la URL del endpoint
+        String urlString = "https://api.openrouteservice.org/v2/directions/" + getTransportType(transportMode) + "?api_key=" + API_KEY +
+                "&start=" + startCoords[0] + "," + startCoords[1] +  // Coordenadas de inicio (long, lat)
+                "&end=" + endCoords[0] + "," + endCoords[1];        // Coordenadas de fin (long, lat)
+
+        // Imprimir la URL para el debug
+        Log.d("OpenRouteService", "Request URL: " + urlString);
+
+        // Crear la solicitud HTTP
+        Request request = new Request.Builder()
+                .url(urlString)
+                .build();
+
+        // Enviar la solicitud y recibir la respuesta
+        Response response = client.newCall(request).execute();
+
+        if (!response.isSuccessful()) {
+            throw new IOException("Unexpected code " + response);
+        }
+
+        // Leer la respuesta
+        String responseBody = response.body().string();
+
+        // Imprimir la respuesta para el debug
+        Log.d("OpenRouteService", "Response: " + responseBody);
+
+        // Procesar la respuesta JSON
+        JSONObject jsonResponse = new JSONObject(responseBody);
+
+        // Obtener la geometría de la ruta (las coordenadas de la línea)
+        JSONObject routes = jsonResponse.getJSONArray("routes").getJSONObject(0);
+        JSONObject geometry = routes.getJSONObject("geometry");
+
+        // Convertir la geometría en una lista de coordenadas
+        List<List<Double>> coordinates = new ArrayList<>();
+        JSONArray coordinatesArray = geometry.getJSONArray("coordinates");
+
+        for (int i = 0; i < coordinatesArray.length(); i++) {
+            JSONArray coord = coordinatesArray.getJSONArray(i);
+            double longitude = coord.getDouble(0);
+            double latitude = coord.getDouble(1);
+            coordinates.add(Arrays.asList(longitude, latitude));
+        }
+
+        // Imprimir las coordenadas para el debug
+        Log.d("OpenRouteService", "Coordinates: " + coordinates.toString());
+
+        return coordinates; // Devuelve la lista de coordenadas para usar en el mapa
+    }
+
+
+
+
+
 
     // Método para mapear el nombre del modo de transporte en francés a la API de OpenRouteService
     // Este método convierte el tipo de transporte a la forma esperada por OpenRouteService.
     private static String getTransportType(String transportMode) {
         switch (transportMode.toLowerCase()) {
-            case "car":
+            case "véhicule":
                 return "driving-car";
-            case "bike":
+            case "vélo":
                 return "cycling-regular";
-            case "walking":
+            case "à pied":
                 return "foot-walking";
-            case "Transport public":
-                return "public-transport";  // Soporte para transporte público (metro)
+            case "transport public":
+                return "public_transport";  // Soporte para transporte público (metro)
             default:
                 return "driving-car";  // Valor por defecto (puedes ajustarlo según tus necesidades)
         }

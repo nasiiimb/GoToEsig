@@ -51,6 +51,8 @@ dependencies {
     // Glide dependency
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation(libs.play.services.location)
+
+
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1") // Usar annotationProcessor
 
     // Activity Result API dependency
@@ -63,6 +65,8 @@ dependencies {
 
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.google.code.gson:gson:2.8.8")
+    implementation("org.osmdroid:osmdroid-android:6.1.14")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
 }
 
 apply(plugin = "com.google.gms.google-services")
