@@ -21,9 +21,10 @@ public class Trip implements Serializable {
     }
 
     // Constructor completo para inicializar todos los campos
-    public Trip(String contributionAmount, String creatorId, String date, String delayTolerance,
+    public Trip(String id,String contributionAmount, String creatorId, String date, String delayTolerance,
                 double distance, double duration, List<String> participants, int seatsAvailable,
                 String startPoint, String time, String transportType) {
+        this.id=id;
         this.contributionAmount = contributionAmount;
         this.creatorId = creatorId;
         this.date = date;
@@ -156,4 +157,3 @@ public class Trip implements Serializable {
 
 
 }
-

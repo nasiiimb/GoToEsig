@@ -135,8 +135,8 @@ public class OpenRouteService {
     public static List<List<Double>> getDirections(double[] startCoords, double[] endCoords, String transportMode) throws IOException, JSONException {
         // Construir la URL del endpoint
         String urlString = "https://api.openrouteservice.org/v2/directions/" + getTransportType(transportMode) + "?api_key=" + API_KEY +
-                "&start=" + startCoords[1] + "," + startCoords[0] +  // Coordenadas de inicio (lat, long)
-                "&end=" + endCoords[1] + "," + endCoords[0];        // Coordenadas de fin (lat, long)
+                "&start=" + startCoords[0] + "," + startCoords[1] +  // Coordenadas de inicio (lat, long)
+                "&end=" + endCoords[0] + "," + endCoords[1];        // Coordenadas de fin (lat, long)
 
         // Imprimir la URL para el debug
         Log.d("OpenRouteService", "Request URL: " + urlString);

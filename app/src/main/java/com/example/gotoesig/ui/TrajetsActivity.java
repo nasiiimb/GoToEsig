@@ -73,6 +73,7 @@
 
                             for (var document : querySnapshot.getDocuments()) {
                                 // Obtener los campos manualmente con los nombres correctos
+                                String id= document.getId();
                                 String contributionAmount = document.getString("contribution_amount");
                                 String creatorId = document.getString("creator_id");
                                 String date = document.getString("date");
@@ -88,6 +89,7 @@
 
                                 // Crear el objeto Trip manualmente
                                 Trip trip = new Trip(
+                                        id,
                                         contributionAmount,
                                         creatorId,
                                         date,

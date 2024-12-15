@@ -112,6 +112,7 @@ public class SearchActivity extends AppCompatActivity {
                         tripList.clear();
 
                         for (var document : querySnapshot.getDocuments()) {
+                            String id=document.getId();
                             String contributionAmount = document.getString("contribution_amount");
                             String creatorId = document.getString("creator_id");
                             String tripStartPoint = document.getString("start_point");
@@ -128,6 +129,7 @@ public class SearchActivity extends AppCompatActivity {
                             if (tripStartPoint != null && tripStartPoint.toLowerCase().contains(startPoint.toLowerCase())
                                     && tripDate != null && tripDate.equals(date)) {
                                 Trip trip = new Trip(
+                                        id,
                                         contributionAmount,
                                         creatorId,
                                         tripDate,
@@ -146,7 +148,7 @@ public class SearchActivity extends AppCompatActivity {
                                 boolean isParticipant = participants != null && participants.contains(currentUserId);
 
                                 // Only add the trip if the user is involved
-                                if (!isCreator &&    !isParticipant) {
+                                if (!isCreator && !isParticipant && seatsAvailable > 0) {
                                     tripList.add(trip);
                                 }
                             }
