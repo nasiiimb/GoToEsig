@@ -31,32 +31,32 @@ public class StatisticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        // Initialize views
+        // Initialisation des vues
         tvNumberOfTrips = findViewById(R.id.tv_number_of_trips);
         tvTotalAmount = findViewById(R.id.tv_total_amount);
 
-        // Get the current user's ID
+        // Récupérer l'ID de l'utilisateur actuel
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // Initialize Firestore
+        // Initialiser Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Fetch statistics
+        // Récupérer les statistiques
         fetchStatistics();
 
-        // Set up back button
+        // Configurer le bouton de retour
         ImageView backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> {
-            // Navigate back to MainActivity
+            // Revenir à MainActivity
             Intent intent = new Intent(StatisticsActivity.this, MainActivity.class);
             startActivity(intent);
-            finish(); // Close StatisticsActivity
+            finish(); // Fermer StatisticsActivity
         });
     }
 
     private void fetchStatistics() {
         db.collection("trips")
-                .whereEqualTo("creator_id", currentUserId) // Only trips created by the current user
+                .whereEqualTo("creator_id", currentUserId) // Seulement les trajets créés par l'utilisateur actuel
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -66,7 +66,7 @@ public class StatisticsActivity extends AppCompatActivity {
                         QuerySnapshot result = task.getResult();
                         if (result != null) {
                             for (QueryDocumentSnapshot document : result) {
-                                // Get the number of participants and the contribution amount
+                                // Récupérer le nombre de participants et le montant de la contribution
                                 List<String> participants = (List<String>) document.get("participants");
                                 String contributionAmountString = document.getString("contribution_amount");
 
@@ -75,17 +75,17 @@ public class StatisticsActivity extends AppCompatActivity {
                                         int contributionAmount = Integer.parseInt(contributionAmountString);
 
                                         if (participants != null && !participants.isEmpty()) {
-                                            // Calculate total amount based on the number of participants
+                                            // Calculer le montant total en fonction du nombre de participants
                                             totalAmount += contributionAmount * participants.size();
                                         }
                                     } catch (NumberFormatException e) {
-                                        Log.e("StatisticsActivity", "Error parsing contribution amount", e);
+                                        Log.e("StatisticsActivity", "Erreur de conversion du montant de la contribution", e);
                                     }
                                 }
-                                tripCount++; // Increment trip count
+                                tripCount++; // Incrémenter le nombre de trajets
                             }
 
-                            // Display results
+                            // Afficher les résultats
                             tvNumberOfTrips.setText("Nombre de trajets proposés : " + tripCount);
                             tvTotalAmount.setText("Montant total récolté : " + totalAmount + "€");
                         }

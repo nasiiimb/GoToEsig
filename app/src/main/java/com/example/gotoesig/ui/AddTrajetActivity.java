@@ -51,7 +51,7 @@ public class AddTrajetActivity extends AppCompatActivity {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    // Coordenadas de ESIGELEC
+    // Coordonnées de l'ESIGELEC
     private static final double[] ESIGELEC_COORDS = {1.10879, 49.387083};
 
     @Override
@@ -71,19 +71,19 @@ public class AddTrajetActivity extends AppCompatActivity {
         contribution = findViewById(R.id.contribution);
         addTripButton = findViewById(R.id.add_trip_button);
 
-        // Inicializar la carga dinámica de tipos de transporte
+        // Initialiser le chargement dynamique des types de transport
         loadTransportTypes();
 
-        // Inicializa el botón de retroceso
+        // Initialiser le bouton de retour
         backButton = findViewById(R.id.back_button);
-        // Listener para volver al MainActivity
+        // Écouteur pour revenir à MainActivity
         backButton.setOnClickListener(v -> {
             Intent intent = new Intent(AddTrajetActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         });
 
-        // Listener para manejar la visibilidad del campo de contribución
+        // Écouteur pour gérer la visibilité du champ de contribution
         transportSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -96,7 +96,7 @@ public class AddTrajetActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parentView) {
-                // No hacer nada si no hay selección
+                // Ne rien faire si aucune sélection n'est faite
             }
         });
 
@@ -128,7 +128,7 @@ public class AddTrajetActivity extends AppCompatActivity {
     }
 
     private void loadTransportTypes() {
-        Log.d("AddTrajetActivity", "Cargando tipos de transporte desde Firestore...");
+        Log.d("AddTrajetActivity", "Chargement des types de transport depuis Firestore...");
 
         firestore.collection("transport_types")
                 .get()
@@ -141,30 +141,30 @@ public class AddTrajetActivity extends AppCompatActivity {
                             List<String> transportTypes = (List<String>) transportTypesObj;
 
                             if (transportTypes != null && !transportTypes.isEmpty()) {
-                                Log.d("AddTrajetActivity", "Tipos de transporte encontrados: " + transportTypes.toString());
+                                Log.d("AddTrajetActivity", "Types de transport trouvés: " + transportTypes.toString());
 
-                                // Crear el adaptador para el Spinner
+                                // Créer l'adaptateur pour le Spinner
                                 ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, transportTypes);
                                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 transportSpinner.setAdapter(adapter);
 
-                                Log.d("AddTrajetActivity", "Adaptador configurado en el Spinner.");
+                                Log.d("AddTrajetActivity", "Adaptateur défini dans le Spinner.");
                             } else {
-                                Log.w("AddTrajetActivity", "La lista de tipos de transporte está vacía.");
+                                Log.w("AddTrajetActivity", "La liste des types de transport est vide.");
                                 Toast.makeText(this, "Aucun type de transport disponible.", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Log.e("AddTrajetActivity", "El campo 'types' no es un array o no está presente.");
-                            Toast.makeText(this, "Erreur: Le champ 'types' n'est pas disponible ou incorrect.", Toast.LENGTH_SHORT).show();
+                            Log.e("AddTrajetActivity", "Le champ 'types' n'est pas un tableau ou est absent.");
+                            Toast.makeText(this, "Erreur : le champ 'types' est introuvable ou incorrect.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Log.e("AddTrajetActivity", "La colección 'transport_types' está vacía.");
-                        Toast.makeText(this, "Erreur: Aucune donnée trouvée dans 'transport_types'.", Toast.LENGTH_SHORT).show();
+                        Log.e("AddTrajetActivity", "La collection 'transport_types' est vide.");
+                        Toast.makeText(this, "Erreur : Aucune donnée trouvée dans 'transport_types'.", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("AddTrajetActivity", "Error al obtener los documentos de Firestore.", e);
-                    Toast.makeText(this, "Erreur de récupération des types de transport.", Toast.LENGTH_SHORT).show();
+                    Log.e("AddTrajetActivity", "Erreur lors de la récupération des documents Firestore.", e);
+                    Toast.makeText(this, "Erreur lors de la récupération des types de transport.", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -186,7 +186,7 @@ public class AddTrajetActivity extends AppCompatActivity {
         try {
             seatsAvailable = Integer.parseInt(seatsAvailableString);
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Le nombre de sièges disponibles doit être un nombre valide", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Le nombre de places disponibles doit être un nombre valide", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -220,7 +220,7 @@ public class AddTrajetActivity extends AppCompatActivity {
                                 trip.put("distance", distance);
                                 trip.put("duration", duration);
                                 trip.put("creator_id", firebaseAuth.getCurrentUser().getUid());
-                                trip.put("participants", new ArrayList<>()); // Lista vacía de participantes
+                                trip.put("participants", new ArrayList<>()); // Liste des participants vide
 
                                 firestore.collection("trips").add(trip)
                                         .addOnSuccessListener(documentReference -> {
@@ -228,7 +228,7 @@ public class AddTrajetActivity extends AppCompatActivity {
                                             finish();
                                         })
                                         .addOnFailureListener(e -> {
-                                            Toast.makeText(AddTrajetActivity.this, "Erreur d'ajout du trajet", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(AddTrajetActivity.this, "Erreur lors de l'ajout du trajet", Toast.LENGTH_SHORT).show();
                                         });
                             })
                             .setNegativeButton("Non", (dialog, which) -> dialog.dismiss())

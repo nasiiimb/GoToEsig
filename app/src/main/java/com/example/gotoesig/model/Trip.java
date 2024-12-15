@@ -16,11 +16,11 @@ public class Trip implements Serializable {
     private String time;
     private String transportType;
 
-    // Constructor vacío requerido por Firebase
+
     public Trip() {
     }
 
-    // Constructor completo para inicializar todos los campos
+
     public Trip(String id,String contributionAmount, String creatorId, String date, String delayTolerance,
                 double distance, double duration, List<String> participants, int seatsAvailable,
                 String startPoint, String time, String transportType) {

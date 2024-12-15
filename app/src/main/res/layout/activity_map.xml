@@ -11,7 +11,7 @@
         android:id="@+id/tv_trip_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Do you want to join this trip?"
+        android:text="Voulez-vous rejoindre ce trajet"
         android:padding="16dp"
         android:layout_marginTop="16dp"
         android:layout_gravity="center" />

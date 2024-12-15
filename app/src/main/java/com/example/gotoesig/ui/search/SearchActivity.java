@@ -35,76 +35,71 @@ public class SearchActivity extends AppCompatActivity {
     private Button btnSearch;
     private static final double[] ESIGELEC_COORDS = {1.10879, 49.387083};
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        // Initialize views
+        // Initialiser les vues
         recyclerView = findViewById(R.id.recycler_view_trips);
         etStartPoint = findViewById(R.id.et_start_point);
         etDate = findViewById(R.id.et_date);
         btnSearch = findViewById(R.id.btn_search);
 
-        // Initialize trip list and adapter
+        // Initialiser la liste des trajets et l'adaptateur
         tripList = new ArrayList<>();
         trajetAdapter = new TrajetAdapter(this, tripList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(trajetAdapter);
 
-        // Configura el botón de regreso
+        // Configurer le bouton de retour
         ImageView backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Al hacer clic en la flecha, regresa a MainActivity
+                // En cliquant sur la flèche, revenir à MainActivity
                 Intent intent = new Intent(SearchActivity.this, MainActivity.class);
                 startActivity(intent);
-                finish(); // Termina SearchActivity
+                finish(); // Terminer SearchActivity
             }
         });
 
-
-
-        // Set up item click listener for RecyclerView
+        // Configurer le listener de clic sur les éléments du RecyclerView
         trajetAdapter.setOnItemClickListener(new TrajetAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Trip trip) throws IOException {
-                // Create Intent to go to MapActivity
+                // Créer l'Intent pour aller à MapActivity
                 Intent intent = new Intent(SearchActivity.this, MapActivity.class);
 
-                // Pass the selected trip to MapActivity
+                // Passer le trajet sélectionné à MapActivity
                 intent.putExtra("trip", trip);
 
-
-
-                // Start MapActivity
+                // Démarrer MapActivity
                 startActivity(intent);
             }
         });
 
-        // Initialize Firestore
+        // Initialiser Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Set up search button click listener
+        // Configurer le listener du bouton de recherche
         btnSearch.setOnClickListener(v -> fetchTrips());
     }
 
     private void fetchTrips() {
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Get logged-in user's ID
-        String startPoint = etStartPoint.getText().toString().trim();  // Get the start point from the EditText
-        String date = etDate.getText().toString().trim();  // Get the date from the EditText
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Obtenir l'ID de l'utilisateur connecté
+        String startPoint = etStartPoint.getText().toString().trim();  // Obtenir le point de départ depuis l'EditText
+        String date = etDate.getText().toString().trim();  // Obtenir la date depuis l'EditText
 
         if (startPoint.isEmpty() || date.isEmpty()) {
-            Toast.makeText(this, "Please fill in both the start point and date.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Veuillez remplir à la fois le point de départ et la date.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         db.collection("trips")
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
-                        Toast.makeText(this, "Error loading trips", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Erreur lors du chargement des trajets", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -125,7 +120,7 @@ public class SearchActivity extends AppCompatActivity {
                             String time = document.getString("time");
                             String transportType = document.getString("transport_type");
 
-                            // Filter by start point and date
+                            // Filtrer par point de départ et date
                             if (tripStartPoint != null && tripStartPoint.toLowerCase().contains(startPoint.toLowerCase())
                                     && tripDate != null && tripDate.equals(date)) {
                                 Trip trip = new Trip(
@@ -143,18 +138,18 @@ public class SearchActivity extends AppCompatActivity {
                                         transportType
                                 );
 
-                                // Check if the current user is involved (creator or participant)
+                                // Vérifier si l'utilisateur actuel est impliqué (créateur ou participant)
                                 boolean isCreator = creatorId != null && creatorId.equals(currentUserId);
                                 boolean isParticipant = participants != null && participants.contains(currentUserId);
 
-                                // Only add the trip if the user is involved
+                                // Ajouter le trajet uniquement si l'utilisateur est impliqué
                                 if (!isCreator && !isParticipant && seatsAvailable > 0) {
                                     tripList.add(trip);
                                 }
                             }
                         }
 
-                        trajetAdapter.notifyDataSetChanged(); // Refresh the RecyclerView with the updated list
+                        trajetAdapter.notifyDataSetChanged(); // Rafraîchir le RecyclerView avec la liste mise à jour
                     }
                 });
     }

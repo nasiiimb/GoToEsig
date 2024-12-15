@@ -31,74 +31,74 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Initialize Firebase
+        // Initialiser Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Initialize UI elements
+        // Initialiser les éléments UI
         emailEditText = findViewById(R.id.email);
         passwordEditText = findViewById(R.id.password);
         loginButton = findViewById(R.id.loginButton);
         signUpButton = findViewById(R.id.signupText);
 
-        // Set up login button click listener
+        // Configurer l'écouteur du clic sur le bouton de connexion
         loginButton.setOnClickListener(v -> {
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(LoginActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Tous les champs sont requis", Toast.LENGTH_SHORT).show();
             } else {
-                // Log input for debugging
-                Log.d(TAG, "Attempting to log in with Email: " + email);
+                // Enregistrer l'email pour le débogage
+                Log.d(TAG, "Tentative de connexion avec l'email : " + email);
 
-                // Sign in with Firebase Authentication
+                // Se connecter avec Firebase Authentication
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this, task -> {
                             if (task.isSuccessful()) {
-                                // Successfully logged in
+                                // Connexion réussie
                                 Log.d(TAG, "signInWithEmailAndPassword:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
 
                                 if (user != null) {
-                                    Log.d(TAG, "User authenticated: UID = " + user.getUid());
+                                    Log.d(TAG, "Utilisateur authentifié : UID = " + user.getUid());
 
-                                    // Fetch additional user data from Firestore
+                                    // Récupérer des données supplémentaires de l'utilisateur depuis Firestore
                                     db.collection("users")
                                             .document(user.getUid())
                                             .get()
                                             .addOnSuccessListener(documentSnapshot -> {
                                                 if (documentSnapshot.exists()) {
-                                                    // Retrieve user data
+                                                    // Récupérer les données de l'utilisateur
                                                     String prenom = documentSnapshot.getString("prenom");
-                                                    Log.d(TAG, "User data fetched successfully: Prenom = " + prenom);
-                                                    Toast.makeText(LoginActivity.this, "Welcome, " + prenom, Toast.LENGTH_SHORT).show();
+                                                    Log.d(TAG, "Données de l'utilisateur récupérées avec succès : Prénom = " + prenom);
+                                                    Toast.makeText(LoginActivity.this, "Bienvenue, " + prenom, Toast.LENGTH_SHORT).show();
                                                 } else {
-                                                    Log.w(TAG, "User document not found in Firestore.");
+                                                    Log.w(TAG, "Document de l'utilisateur non trouvé dans Firestore.");
                                                 }
 
-                                                // Proceed to MainActivity
+                                                // Passer à MainActivity
                                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                                 startActivity(intent);
-                                                finish(); // Close LoginActivity
+                                                finish(); // Fermer LoginActivity
                                             })
                                             .addOnFailureListener(e -> {
-                                                Log.e(TAG, "Error fetching user data: ", e);
-                                                Toast.makeText(LoginActivity.this, "Error fetching user data", Toast.LENGTH_SHORT).show();
+                                                Log.e(TAG, "Erreur lors de la récupération des données de l'utilisateur : ", e);
+                                                Toast.makeText(LoginActivity.this, "Erreur lors de la récupération des données de l'utilisateur", Toast.LENGTH_SHORT).show();
                                             });
                                 } else {
-                                    Log.e(TAG, "signInWithEmailAndPassword: user is null after login.");
-                                    Toast.makeText(LoginActivity.this, "Unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show();
+                                    Log.e(TAG, "signInWithEmailAndPassword : l'utilisateur est nul après la connexion.");
+                                    Toast.makeText(LoginActivity.this, "Une erreur inattendue est survenue. Veuillez réessayer.", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 Log.e(TAG, "signInWithEmailAndPassword:failure", task.getException());
-                                Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Échec de l'authentification : " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
             }
         });
 
-        // Set up sign-up link (TextView) to navigate to SignUpActivity
+        // Configurer le lien d'inscription (TextView) pour naviguer vers SignUpActivity
         signUpButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(intent);
@@ -115,14 +115,14 @@ public class LoginActivity extends AppCompatActivity {
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(LoginActivity.this, "Un e-mail pour réinitialiser votre mot de passe a été envoyé", Toast.LENGTH_SHORT).show();
-                                Log.d(TAG, "Password reset email sent to: " + email);
+                                Log.d(TAG, "E-mail de réinitialisation de mot de passe envoyé à : " + email);
                             } else {
-                                Log.e(TAG, "Failed to send password reset email: ", task.getException());
+                                Log.e(TAG, "Échec de l'envoi de l'e-mail de réinitialisation du mot de passe : ", task.getException());
                                 Toast.makeText(LoginActivity.this, "Échec de l'envoi de l'e-mail. Veuillez vérifier l'adresse saisie", Toast.LENGTH_SHORT).show();
                             }
                         });
             }
         });
-    
+
     }
 }

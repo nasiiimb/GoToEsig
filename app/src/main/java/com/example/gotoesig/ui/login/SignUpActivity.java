@@ -31,11 +31,11 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        // Initialize Firebase
+        // Initialiser Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Initialize UI elements
+        // Initialiser les éléments de l'interface utilisateur
         usernameEditText = findViewById(R.id.signupPrenom);
         emailEditText = findViewById(R.id.signupEmail);
         passwordEditText = findViewById(R.id.signupPassword);
@@ -43,55 +43,54 @@ public class SignUpActivity extends AppCompatActivity {
         cityEditText = findViewById(R.id.signupCity);
         signUpButton = findViewById(R.id.signUpButton);
 
-        // Set up sign-up button click listener
+        // Configurer le listener du bouton d'inscription
         signUpButton.setOnClickListener(v -> {
-            String prenom = usernameEditText.getText().toString().trim();
+            String firstName = usernameEditText.getText().toString().trim();
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
             String phone = phoneEditText.getText().toString().trim();
             String city = cityEditText.getText().toString().trim();
 
-            // Validate inputs
-            if (prenom.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(SignUpActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
+            // Valider les champs
+            if (firstName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(SignUpActivity.this, "Tous les champs sont obligatoires", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Create user with Firebase Authentication
+            // Créer l'utilisateur avec Firebase Authentication
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
-                            // Get user UID
+                            // Obtenir le UID de l'utilisateur
                             String uid = mAuth.getCurrentUser().getUid();
 
-                            // Create user profile data
+                            // Créer les données du profil utilisateur
                             Map<String, Object> userProfile = new HashMap<>();
-                            userProfile.put("uid", uid); // Store UID explicitly
-                            userProfile.put("prenom", prenom);
+                            userProfile.put("uid", uid); // Stocker explicitement le UID
+                            userProfile.put("firstName", firstName);
                             userProfile.put("email", email);
                             userProfile.put("phone", phone);
                             userProfile.put("city", city);
-                            userProfile.put("photo", ""); // Add the photo field with an empty URI initially
+                            userProfile.put("photo", ""); // Ajouter le champ photo avec une URI vide initialement
 
-                            // Save profile to Firestore
+                            // Enregistrer le profil dans Firestore
                             db.collection("users").document(uid).set(userProfile)
                                     .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(SignUpActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-                                        // Redirect to MainActivity
+                                        Toast.makeText(SignUpActivity.this, "Inscription réussie", Toast.LENGTH_SHORT).show();
+                                        // Rediriger vers MainActivity
                                         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                                         startActivity(intent);
                                         finish();
                                     })
                                     .addOnFailureListener(e -> {
-                                        Log.e(TAG, "Error saving profile: " + e.getMessage());
-                                        Toast.makeText(SignUpActivity.this, "Failed to save profile data", Toast.LENGTH_SHORT).show();
+                                        Log.e(TAG, "Erreur lors de l'enregistrement du profil : " + e.getMessage());
+                                        Toast.makeText(SignUpActivity.this, "Échec de l'enregistrement des données du profil", Toast.LENGTH_SHORT).show();
                                     });
                         } else {
-                            Log.e(TAG, "Registration failed: " + task.getException().getMessage());
-                            Toast.makeText(SignUpActivity.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Échec de l'inscription : " + task.getException().getMessage());
+                            Toast.makeText(SignUpActivity.this, "Échec de l'inscription : " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         });
     }
 }
-

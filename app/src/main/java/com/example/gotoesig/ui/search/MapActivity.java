@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,8 +43,9 @@ public class MapActivity extends AppCompatActivity {
     private Button btnJoin;
     private Trip trip;
     private Executor executor = Executors.newSingleThreadExecutor();
+    private TextView tvTripDetails;  // TextView para mostrar los detalles del trayecto
 
-        @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
@@ -61,6 +63,7 @@ public class MapActivity extends AppCompatActivity {
         mapView = findViewById(R.id.mapview);
         btnCancel = findViewById(R.id.btn_cancel);
         btnJoin = findViewById(R.id.btn_join);
+        tvTripDetails = findViewById(R.id.tv_trip_details);  // Inicialización del TextView
 
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -72,10 +75,13 @@ public class MapActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(v -> finish());
         btnJoin.setOnClickListener(v -> joinTrip(trip));
 
-        // Limpia los overlays existentes en el mapa
+        // Actualizar el TextView con los detalles del trayecto
+        updateTripDetails();
+
+        // Limpiar las superposiciones existentes en el mapa
         mapView.getOverlays().clear();
 
-        // Cargar la ruta en un hilo en segundo plano
+        // Cargar la ruta en segundo plano
         loadRouteInBackground();
     }
 
@@ -105,29 +111,29 @@ public class MapActivity extends AppCompatActivity {
             double[] coords = OpenRouteService.getCoordinatesFromAddress(address);
             return new GeoPoint(coords[0], coords[1]);
         } catch (IOException | JSONException e) {
-            Log.e(TAG, "Error obteniendo coordenadas para la dirección: " + address, e);
-            runOnUiThread(() -> Toast.makeText(this, "Error obteniendo coordenadas", Toast.LENGTH_SHORT).show());
-            return new GeoPoint(0.0, 0.0); // Retorna un punto por defecto en caso de error
+            Log.e(TAG, "Error al obtener las coordenadas para la dirección: " + address, e);
+            runOnUiThread(() -> Toast.makeText(this, "Error al obtener las coordenadas", Toast.LENGTH_SHORT).show());
+            return new GeoPoint(0.0, 0.0); // Devolver un punto predeterminado en caso de error
         }
     }
 
     private void setupMap(GeoPoint startPoint, GeoPoint endPoint) {
         IMapController mapController = mapView.getController();
 
-        // Centrar el mapa en el startPoint antes de añadir los overlays
+        // Centrar el mapa en el punto de inicio antes de agregar las superposiciones
         mapController.setCenter(startPoint);
         mapController.setZoom(15);
 
-        // Añadir solo un marcador para el punto de inicio
+        // Agregar marcador para el punto de inicio
         Marker startMarker = new Marker(mapView);
         startMarker.setPosition(startPoint);
-        startMarker.setTitle("Start: " + trip.getStartPoint());
+        startMarker.setTitle("Inicio: " + trip.getStartPoint());
         mapView.getOverlays().add(startMarker);
 
-        // Añadir solo un marcador para el punto de destino
+        // Agregar marcador para el punto de llegada
         Marker endMarker = new Marker(mapView);
         endMarker.setPosition(endPoint);
-        endMarker.setTitle("End: ESIGELEC");
+        endMarker.setTitle("Llegada: ESIGELEC");
         mapView.getOverlays().add(endMarker);
 
         // Obtener la ruta entre los puntos
@@ -139,34 +145,31 @@ public class MapActivity extends AppCompatActivity {
                     Polyline route = new Polyline();
                     ArrayList<GeoPoint> geoPoints = new ArrayList<>();
                     for (List<Double> point : routePoints) {
-                        geoPoints.add(new GeoPoint(point.get(1), point.get(0))); // Convertir [longitude, latitude] a GeoPoint
+                        geoPoints.add(new GeoPoint(point.get(1), point.get(0))); // Convertir [longitud, latitud] a GeoPoint
                     }
                     route.setPoints(geoPoints);
                     route.setWidth(5f);
                     route.setColor(0xFF0000FF);
                     mapView.getOverlays().add(route);
 
-                    // Volver a centrar el mapa en el punto de inicio después de añadir la ruta
+                    // Recentrar el mapa en el punto de inicio después de agregar la ruta
                     mapController.setCenter(startPoint);
                 });
             } else {
-                runOnUiThread(() -> Toast.makeText(this, "Error dibujando la ruta", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(this, "Error al trazar la ruta", Toast.LENGTH_SHORT).show());
             }
         });
     }
-
-
-
 
     private List<List<Double>> getRouteBetweenPoints(GeoPoint startPoint, GeoPoint endPoint) {
         try {
             double[] startCoords = {startPoint.getLongitude(), startPoint.getLatitude()};
             double[] endCoords = {endPoint.getLongitude(), endPoint.getLatitude()};
-            String transportType = trip.getTransportType();  // Tipo de transporte de la clase Trip
+            String transportType = trip.getTransportType();  // Tipo de transporte desde la clase Trip
 
             return OpenRouteService.getDirections(startCoords, endCoords, transportType);
         } catch (IOException | JSONException e) {
-            Log.e(TAG, "Error obteniendo ruta entre los puntos", e);
+            Log.e(TAG, "Error al obtener la ruta entre los puntos", e);
             return new ArrayList<>();
         }
     }
@@ -176,7 +179,7 @@ public class MapActivity extends AppCompatActivity {
 
         // Verificar si hay asientos disponibles
         if (trip.getSeatsAvailable() > 0) {
-            // Añadir el usuario a la lista de participantes
+            // Agregar al usuario a la lista de participantes
             trip.getParticipants().add(userId);
 
             // Reducir el número de asientos disponibles
@@ -188,21 +191,35 @@ public class MapActivity extends AppCompatActivity {
                     .update("participants", trip.getParticipants(), "seats_available", trip.getSeatsAvailable())
                     .addOnSuccessListener(aVoid -> {
                         // Mostrar mensaje de éxito
-                        Toast.makeText(MapActivity.this, "Has unido al trayecto", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MapActivity.this, "Te has unido al trayecto", Toast.LENGTH_SHORT).show();
 
                         // Volver a MainActivity
                         Intent intent = new Intent(MapActivity.this, MainActivity.class);
                         startActivity(intent);
-                        finish(); // Finalizar MapActivity
+                        finish(); // Cerrar MapActivity
                     })
                     .addOnFailureListener(e -> {
                         // Mostrar mensaje de error
-                        Toast.makeText(MapActivity.this, "Error al unirse al trayecto", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MapActivity.this, "Error al registrarse en el trayecto", Toast.LENGTH_SHORT).show();
                     });
         } else {
             // Mostrar mensaje si no hay asientos disponibles
             Toast.makeText(MapActivity.this, "No hay asientos disponibles", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void updateTripDetails() {
+        // Texte informatif sur le trajet
+        String tripDetailsText = "Voulez-vous rejoindre ce trajet ?";
+
+        // Vérifier si le type de transport est "Véhicule"
+        if ("Véhicule".equals(trip.getTransportType())) {
+            // Si c'est un véhicule, ajouter le prix au message
+            tripDetailsText += "\nPrix : " + trip.getContributionAmount() + "€";  // Supposons que contributionAmount soit une chaîne de caractères
+        }
+
+        // Mettre à jour le TextView avec le texte
+        tvTripDetails.setText(tripDetailsText);
     }
 
 }
