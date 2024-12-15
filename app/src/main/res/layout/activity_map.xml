@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:weightSum="1">
+
+    <!-- Texto informativo sobre el trayecto -->
+    <TextView
+        android:id="@+id/tv_trip_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Do you want to join this trip?"
+        android:padding="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center" />
+
+    <!-- Contenedor del mapa, con altura ajustada -->
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+
+        />
+    <!-- Botón de cancelar -->
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Botón de unirse -->
+    <Button
+        android:id="@+id/btn_join"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Join"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

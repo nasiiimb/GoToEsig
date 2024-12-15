@@ -135,8 +135,8 @@ public class OpenRouteService {
     public static List<List<Double>> getDirections(double[] startCoords, double[] endCoords, String transportMode) throws IOException, JSONException {
         // Construir la URL del endpoint
         String urlString = "https://api.openrouteservice.org/v2/directions/" + getTransportType(transportMode) + "?api_key=" + API_KEY +
-                "&start=" + startCoords[0] + "," + startCoords[1] +  // Coordenadas de inicio (long, lat)
-                "&end=" + endCoords[0] + "," + endCoords[1];        // Coordenadas de fin (long, lat)
+                "&start=" + startCoords[1] + "," + startCoords[0] +  // Coordenadas de inicio (lat, long)
+                "&end=" + endCoords[1] + "," + endCoords[0];        // Coordenadas de fin (lat, long)
 
         // Imprimir la URL para el debug
         Log.d("OpenRouteService", "Request URL: " + urlString);
@@ -163,17 +163,18 @@ public class OpenRouteService {
         JSONObject jsonResponse = new JSONObject(responseBody);
 
         // Obtener la geometría de la ruta (las coordenadas de la línea)
-        JSONObject routes = jsonResponse.getJSONArray("routes").getJSONObject(0);
-        JSONObject geometry = routes.getJSONObject("geometry");
+        JSONArray coordinatesArray = jsonResponse.getJSONArray("features")
+                .getJSONObject(0)  // Tomar el primer objeto de "features"
+                .getJSONObject("geometry")  // Acceder a "geometry"
+                .getJSONArray("coordinates");  // Obtener las coordenadas
 
         // Convertir la geometría en una lista de coordenadas
         List<List<Double>> coordinates = new ArrayList<>();
-        JSONArray coordinatesArray = geometry.getJSONArray("coordinates");
 
         for (int i = 0; i < coordinatesArray.length(); i++) {
             JSONArray coord = coordinatesArray.getJSONArray(i);
-            double longitude = coord.getDouble(0);
-            double latitude = coord.getDouble(1);
+            double longitude = coord.getDouble(0); // Longitud
+            double latitude = coord.getDouble(1);  // Latitud
             coordinates.add(Arrays.asList(longitude, latitude));
         }
 
@@ -182,6 +183,7 @@ public class OpenRouteService {
 
         return coordinates; // Devuelve la lista de coordenadas para usar en el mapa
     }
+
 
 
 

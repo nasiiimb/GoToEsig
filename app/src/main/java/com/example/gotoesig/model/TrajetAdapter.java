@@ -12,12 +12,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gotoesig.R;
 
+import java.io.IOException;
 import java.util.List;
 
 public class TrajetAdapter extends RecyclerView.Adapter<TrajetAdapter.TrajetViewHolder> {
 
     private Context context;
     private List<Trip> trips;
+    private OnItemClickListener listener;
+
+    // Interfaz para el listener
+    public interface OnItemClickListener {
+        void onItemClick(Trip trip) throws IOException;
+    }
+
+    // Configurar el listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public TrajetAdapter(Context context, List<Trip> trips) {
         this.context = context;
@@ -43,7 +55,19 @@ public class TrajetAdapter extends RecyclerView.Adapter<TrajetAdapter.TrajetView
         // Set the transport mode
         holder.transportTypeTextView.setText(trip.getTransportType());
 
-        Log.d("TrajetAdapter",trip.getStartPoint()+ ", " + trip.getTransportType() );
+        // Log to check data
+        Log.d("TrajetAdapter", trip.getStartPoint() + ", " + trip.getTransportType());
+
+        // On click listener for the item
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                try {
+                    listener.onItemClick(trip);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     @Override

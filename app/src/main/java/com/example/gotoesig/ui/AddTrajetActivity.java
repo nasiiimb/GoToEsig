@@ -132,68 +132,61 @@ public class AddTrajetActivity extends AppCompatActivity {
         String tripDate = date.getText().toString();
         String tripTime = time.getText().toString();
         String delayTolerance = toleranceTime.getText().toString();
-        String seatsAvailable = availableSeats.getText().toString();
+        String seatsAvailableString = availableSeats.getText().toString();
         String contributionAmount = contribution.getVisibility() == View.VISIBLE ? contribution.getText().toString() : "0";
 
-        if (startPoint.isEmpty() || tripDate.isEmpty() || tripTime.isEmpty() || delayTolerance.isEmpty() || seatsAvailable.isEmpty()) {
+        // Validar que los campos no estén vacíos
+        if (startPoint.isEmpty() || tripDate.isEmpty() || tripTime.isEmpty() || delayTolerance.isEmpty() || seatsAvailableString.isEmpty()) {
             Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Convertir availableSeats a Integer
+        int seatsAvailable;
+        try {
+            seatsAvailable = Integer.parseInt(seatsAvailableString);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Le nombre de sièges disponibles doit être un nombre valide", Toast.LENGTH_SHORT).show();
             return;
         }
 
         executor.execute(() -> {
             try {
-                // Obtener los valores dentro del executor para asegurarse de que están actualizados
-                String transportTypeInsideExecutor = transportSpinner.getSelectedItem().toString();
-                String startPointInsideExecutor = departPoint.getText().toString();
-                String tripDateInsideExecutor = date.getText().toString();
-                String tripTimeInsideExecutor = time.getText().toString();
-                String delayToleranceInsideExecutor = toleranceTime.getText().toString();
-                String seatsAvailableInsideExecutor = availableSeats.getText().toString();
-                String contributionAmountInsideExecutor = contribution.getVisibility() == View.VISIBLE ? contribution.getText().toString() : "0";
+                // Obtener las coordenadas del punto de inicio
+                double[] startCoords = OpenRouteService.getCoordinatesFromAddress(startPoint);
 
-                Log.d("AddTrajetActivity", "Iniciando obtención de coordenadas para el punto de partida...");
-                double[] startCoords = OpenRouteService.getCoordinatesFromAddress(startPointInsideExecutor);
-
-                // Agregar mensaje de depuración para verificar las coordenadas obtenidas
-                Log.d("AddTrajetActivity", "Coordenadas obtenidas: Lat: " + startCoords[0] + ", Lon: " + startCoords[1]);
-
-                Log.d("AddTrajetActivity", "Iniciando cálculo de distancia y duración...");
-                // Usar las coordenadas de ESIGELEC como destino
-                double[] result = OpenRouteService.getDistanceAndDuration(startCoords, ESIGELEC_COORDS, transportTypeInsideExecutor);
-
-                // Agregar mensaje de depuración para los resultados del cálculo
-                Log.d("AddTrajetActivity", "Resultado distancia y duración: " + result[0] + " km, " + result[1] + " minutos");
+                // Calcular distancia y duración
+                double[] result = OpenRouteService.getDistanceAndDuration(startCoords, ESIGELEC_COORDS, transportType);
 
                 double calculatedDistance = result[0];
                 double calculatedDuration = result[1];
-                Log.d("AddTrajetActivity", "Distancia calculada: " + calculatedDistance + " km, Duración calculada: " + calculatedDuration + " minutos");
 
                 handler.post(() -> {
-                    // Actualizar las variables de distancia y duración
                     distance = calculatedDistance;
                     duration = calculatedDuration;
 
                     // Crear el mensaje para mostrar en el AlertDialog
                     String message = String.format("Départ: %s\nDestination: ESIGELEC\nHeure: %s\nDistance(km): %.2f km\nTemps estimé(min): %.2f min\nPrix: %s",
-                            startPointInsideExecutor, tripTimeInsideExecutor, calculatedDistance, calculatedDuration, contributionAmountInsideExecutor);
+                            startPoint, tripTime, calculatedDistance, calculatedDuration, contributionAmount);
 
                     new AlertDialog.Builder(this)
                             .setTitle("Confirmer l'ajout")
                             .setMessage(message)
                             .setPositiveButton("Oui", (dialog, which) -> {
                                 Map<String, Object> trip = new HashMap<>();
-                                trip.put("transport_type", transportTypeInsideExecutor);
-                                trip.put("start_point", startPointInsideExecutor);
-                                trip.put("date", tripDateInsideExecutor);
-                                trip.put("time", tripTimeInsideExecutor);
-                                trip.put("delay_tolerance", delayToleranceInsideExecutor);
-                                trip.put("seats_available", seatsAvailableInsideExecutor);
-                                trip.put("contribution_amount", contributionAmountInsideExecutor);
+                                trip.put("transport_type", transportType);
+                                trip.put("start_point", startPoint);
+                                trip.put("date", tripDate);
+                                trip.put("time", tripTime);
+                                trip.put("delay_tolerance", delayTolerance);
+                                trip.put("seats_available", seatsAvailable); // Aquí es un Integer
+                                trip.put("contribution_amount", contributionAmount);
                                 trip.put("distance", distance);
                                 trip.put("duration", duration);
                                 trip.put("creator_id", firebaseAuth.getCurrentUser().getUid());
-                                trip.put("participants", new ArrayList<>());
+                                trip.put("participants", new ArrayList<>()); // Lista vacía de participantes
 
+                                // Guardar en Firestore
                                 firestore.collection("trips").add(trip)
                                         .addOnSuccessListener(documentReference -> {
                                             Toast.makeText(AddTrajetActivity.this, "Trajet ajouté avec succès", Toast.LENGTH_SHORT).show();
@@ -212,6 +205,7 @@ public class AddTrajetActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
 

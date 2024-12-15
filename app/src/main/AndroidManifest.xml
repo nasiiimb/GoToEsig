@@ -50,7 +50,7 @@
             android:exported="true" />
 
         <activity
-            android:name="com.example.gotoesig.ui.SearchActivity"
+            android:name="com.example.gotoesig.ui.search.SearchActivity"
             android:exported="true" />
 
         <activity
@@ -60,7 +60,10 @@
         <activity
             android:name="com.example.gotoesig.ui.TrajetsActivity"
             android:exported="true" />
+        <activity
 
+            android:name="com.example.gotoesig.ui.search.MapActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

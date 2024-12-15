@@ -1,8 +1,9 @@
 package com.example.gotoesig.model;
 
 import java.util.List;
+import java.io.Serializable;
 
-public class Trip {
+public class Trip implements Serializable {
     private String contributionAmount;
     private String creatorId;
     private String date;
@@ -10,7 +11,7 @@ public class Trip {
     private double distance;
     private double duration;
     private List<String> participants;
-    private String seatsAvailable;
+    private int seatsAvailable;
     private String startPoint;
     private String time;
     private String transportType;
@@ -21,7 +22,7 @@ public class Trip {
 
     // Constructor completo para inicializar todos los campos
     public Trip(String contributionAmount, String creatorId, String date, String delayTolerance,
-                double distance, double duration, List<String> participants, String seatsAvailable,
+                double distance, double duration, List<String> participants, int seatsAvailable,
                 String startPoint, String time, String transportType) {
         this.contributionAmount = contributionAmount;
         this.creatorId = creatorId;
@@ -103,11 +104,11 @@ public class Trip {
         this.participants = participants;
     }
 
-    public String getSeatsAvailable() {
+    public int getSeatsAvailable() {
         return seatsAvailable;
     }
 
-    public void setSeatsAvailable(String seatsAvailable) {
+    public void setSeatsAvailable(int seatsAvailable) {
         this.seatsAvailable = seatsAvailable;
     }
 

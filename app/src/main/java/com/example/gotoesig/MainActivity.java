@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.gotoesig.ui.*;
 import com.example.gotoesig.ui.login.LoginActivity;
+import com.example.gotoesig.ui.search.SearchActivity;
 
 public class MainActivity extends AppCompatActivity {
 

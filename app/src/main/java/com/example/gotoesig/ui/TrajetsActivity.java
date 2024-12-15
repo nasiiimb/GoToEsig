@@ -80,7 +80,8 @@
                                 Double distance = document.getDouble("distance");
                                 Double duration = document.getDouble("duration");
                                 List<String> participants = (List<String>) document.get("participants");
-                                String seatsAvailable = document.getString("seats_available");
+                                int seatsAvailable = ((Number) document.get("seats_available")).intValue();;
+
                                 String startPoint = document.getString("start_point");
                                 String time = document.getString("time");
                                 String transportType = document.getString("transport_type");
