@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
+
+    <!-- Botón de retroceso -->
+    <ImageView
+        android:id="@+id/back_button"
+        android:layout_width="42dp"
+        android:layout_height="45dp"
+        android:src="@drawable/ic_back_arrow"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
+        app:tint="@color/purple" />
+
+    <!-- Título de la actividad -->
+    <TextView
+        android:id="@+id/tv_statistics_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Statistiques"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_below="@id/back_button"
+        android:layout_marginBottom="32dp"
+        android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true" />
+
+    <!-- Número de trayectos propuestos -->
+    <TextView
+        android:id="@+id/tv_number_of_trips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre de trajets proposés : 0"
+        android:textSize="18sp"
+        android:layout_below="@id/tv_statistics_title"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_horizontal" />
+
+    <!-- Monto total recaudado -->
+    <TextView
+        android:id="@+id/tv_total_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Montant total récolté : 0€"
+        android:textSize="18sp"
+        android:layout_below="@id/tv_number_of_trips"
+        android:gravity="center_horizontal" />
+
+</RelativeLayout>

@@ -22,6 +22,7 @@ import com.example.gotoesig.MainActivity;
 import com.example.gotoesig.R;
 import com.example.gotoesig.data.api.OpenRouteService;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -69,9 +71,8 @@ public class AddTrajetActivity extends AppCompatActivity {
         contribution = findViewById(R.id.contribution);
         addTripButton = findViewById(R.id.add_trip_button);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.transport_modes, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        transportSpinner.setAdapter(adapter);
+        // Inicializar la carga dinámica de tipos de transporte
+        loadTransportTypes();
 
         // Inicializa el botón de retroceso
         backButton = findViewById(R.id.back_button);
@@ -82,6 +83,7 @@ public class AddTrajetActivity extends AppCompatActivity {
             finish();
         });
 
+        // Listener para manejar la visibilidad del campo de contribución
         transportSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -125,8 +127,48 @@ public class AddTrajetActivity extends AppCompatActivity {
         });
     }
 
+    private void loadTransportTypes() {
+        Log.d("AddTrajetActivity", "Cargando tipos de transporte desde Firestore...");
+
+        firestore.collection("transport_types")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+
+                        Object transportTypesObj = documentSnapshot.get("types");
+                        if (transportTypesObj instanceof List<?>) {
+                            List<String> transportTypes = (List<String>) transportTypesObj;
+
+                            if (transportTypes != null && !transportTypes.isEmpty()) {
+                                Log.d("AddTrajetActivity", "Tipos de transporte encontrados: " + transportTypes.toString());
+
+                                // Crear el adaptador para el Spinner
+                                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, transportTypes);
+                                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                transportSpinner.setAdapter(adapter);
+
+                                Log.d("AddTrajetActivity", "Adaptador configurado en el Spinner.");
+                            } else {
+                                Log.w("AddTrajetActivity", "La lista de tipos de transporte está vacía.");
+                                Toast.makeText(this, "Aucun type de transport disponible.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Log.e("AddTrajetActivity", "El campo 'types' no es un array o no está presente.");
+                            Toast.makeText(this, "Erreur: Le champ 'types' n'est pas disponible ou incorrect.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.e("AddTrajetActivity", "La colección 'transport_types' está vacía.");
+                        Toast.makeText(this, "Erreur: Aucune donnée trouvée dans 'transport_types'.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("AddTrajetActivity", "Error al obtener los documentos de Firestore.", e);
+                    Toast.makeText(this, "Erreur de récupération des types de transport.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
     private void addTrip() {
-        // Obtener los valores de los EditText y Spinner antes de iniciar el proceso en el executor
         String transportType = transportSpinner.getSelectedItem().toString();
         String startPoint = departPoint.getText().toString();
         String tripDate = date.getText().toString();
@@ -135,13 +177,11 @@ public class AddTrajetActivity extends AppCompatActivity {
         String seatsAvailableString = availableSeats.getText().toString();
         String contributionAmount = contribution.getVisibility() == View.VISIBLE ? contribution.getText().toString() : "0";
 
-        // Validar que los campos no estén vacíos
         if (startPoint.isEmpty() || tripDate.isEmpty() || tripTime.isEmpty() || delayTolerance.isEmpty() || seatsAvailableString.isEmpty()) {
             Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Convertir availableSeats a Integer
         int seatsAvailable;
         try {
             seatsAvailable = Integer.parseInt(seatsAvailableString);
@@ -152,10 +192,7 @@ public class AddTrajetActivity extends AppCompatActivity {
 
         executor.execute(() -> {
             try {
-                // Obtener las coordenadas del punto de inicio
                 double[] startCoords = OpenRouteService.getCoordinatesFromAddress(startPoint);
-
-                // Calcular distancia y duración
                 double[] result = OpenRouteService.getDistanceAndDuration(startCoords, ESIGELEC_COORDS, transportType);
 
                 double calculatedDistance = result[0];
@@ -165,7 +202,6 @@ public class AddTrajetActivity extends AppCompatActivity {
                     distance = calculatedDistance;
                     duration = calculatedDuration;
 
-                    // Crear el mensaje para mostrar en el AlertDialog
                     String message = String.format("Départ: %s\nDestination: ESIGELEC\nHeure: %s\nDistance(km): %.2f km\nTemps estimé(min): %.2f min\nPrix: %s",
                             startPoint, tripTime, calculatedDistance, calculatedDuration, contributionAmount);
 
@@ -179,14 +215,13 @@ public class AddTrajetActivity extends AppCompatActivity {
                                 trip.put("date", tripDate);
                                 trip.put("time", tripTime);
                                 trip.put("delay_tolerance", delayTolerance);
-                                trip.put("seats_available", seatsAvailable); // Aquí es un Integer
+                                trip.put("seats_available", seatsAvailable);
                                 trip.put("contribution_amount", contributionAmount);
                                 trip.put("distance", distance);
                                 trip.put("duration", duration);
                                 trip.put("creator_id", firebaseAuth.getCurrentUser().getUid());
                                 trip.put("participants", new ArrayList<>()); // Lista vacía de participantes
 
-                                // Guardar en Firestore
                                 firestore.collection("trips").add(trip)
                                         .addOnSuccessListener(documentReference -> {
                                             Toast.makeText(AddTrajetActivity.this, "Trajet ajouté avec succès", Toast.LENGTH_SHORT).show();
@@ -205,9 +240,4 @@ public class AddTrajetActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
-
 }

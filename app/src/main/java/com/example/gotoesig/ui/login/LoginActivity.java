@@ -103,5 +103,26 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(intent);
         });
+
+        TextView forgotPasswordText = findViewById(R.id.forgotPasswordText);
+        forgotPasswordText.setOnClickListener(v -> {
+            String email = emailEditText.getText().toString().trim();
+
+            if (email.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Veuillez entrer votre adresse e-mail", Toast.LENGTH_SHORT).show();
+            } else {
+                mAuth.sendPasswordResetEmail(email)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, "Un e-mail pour réinitialiser votre mot de passe a été envoyé", Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "Password reset email sent to: " + email);
+                            } else {
+                                Log.e(TAG, "Failed to send password reset email: ", task.getException());
+                                Toast.makeText(LoginActivity.this, "Échec de l'envoi de l'e-mail. Veuillez vérifier l'adresse saisie", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+    
     }
 }

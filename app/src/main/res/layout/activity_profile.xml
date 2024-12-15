@@ -37,8 +37,7 @@
                 android:layout_marginBottom="28dp"
                 android:src="@drawable/profile_vector"
                 android:scaleType="centerCrop"
-                android:background="@drawable/circle_background"
-                android:padding="3dp"
+                android:background="@android:color/transparent"                android:padding="3dp"
                 app:tint="@color/purple" />
 
             <!-- Name -->
